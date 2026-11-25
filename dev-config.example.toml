@@ -1,0 +1,50 @@
+# Develop your config beside checkouts of DIE and the extensions: copy this file to
+# `.cargo/config.toml` (which git ignores) and write your own paths for the `/abs/path/to/...`
+# placeholders. Cargo doesn't expand `~`, so they must be absolute, such as
+# `/Users/you/src/die/crates/die-core`.
+#
+# The patches build against your checkouts rather than GitHub at `main`, so a change to DIE or an
+# extension is seen here before it's pushed. Every repository in one build (this one and each
+# extension) should patch to the same checkouts, or two die-cores meet. An extension you don't
+# have a checkout of can be left out: it then comes from GitHub.
+
+# DIE's crates: every one that resolves from DIE's repository, including the ones only the others
+# depend on (die-core, die-render, die-term).
+[patch."https://github.com/0xDEADBEE7/die"]
+die = { path = "/abs/path/to/die/crates/die" }
+die-core = { path = "/abs/path/to/die/crates/die-core" }
+die-render = { path = "/abs/path/to/die/crates/die-render" }
+die-vim = { path = "/abs/path/to/die/crates/die-vim" }
+die-term = { path = "/abs/path/to/die/crates/die-term" }
+die-dev = { path = "/abs/path/to/die/apps/die-dev" }
+die-test-cap = { path = "/abs/path/to/die/tools/test-cap" }
+
+# The terminal engine's sys crate, DIE's crates/die-term-sys. This takes precedence over
+# Cargo.toml's patch of the same package, which names DIE's git source: a patch in a
+# configuration file wins over one in the manifest.
+[patch."https://github.com/uzaaft/libghostty-rs"]
+libghostty-vt-sys = { path = "/abs/path/to/die/crates/die-term-sys" }
+
+# The extensions, and die-draw, which die-fig and die-markdown draw with.
+[patch."https://github.com/0xDEADBEE7/die-draw"]
+die-draw = { path = "/abs/path/to/die-draw" }
+
+[patch."https://github.com/0xDEADBEE7/die-orchid-client"]
+die-orchid-client = { path = "/abs/path/to/die-orchid-client" }
+
+[patch."https://github.com/0xDEADBEE7/die-whiteboard"]
+die-whiteboard = { path = "/abs/path/to/die-whiteboard" }
+
+[patch."https://github.com/0xDEADBEE7/die-jellyfish"]
+die-jellyfish = { path = "/abs/path/to/die-jellyfish" }
+
+[patch."https://github.com/0xDEADBEE7/die-markdown"]
+die-markdown = { path = "/abs/path/to/die-markdown" }
+
+[patch."https://github.com/0xDEADBEE7/die-fig"]
+die-fig = { path = "/abs/path/to/die-fig" }
+
+# Where DIE's own fonts are (`cargo xtask fonts` in the DIE checkout fetches them). die-draw and
+# the whiteboard find them here, at run time and as built, and the tests that set text need them.
+[env]
+DIE_FONT_DIR = "/abs/path/to/die/fonts"

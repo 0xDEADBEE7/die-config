@@ -1,0 +1,62 @@
+[package]
+name = "die-config"
+description = "The owner's DIE: DIE's own config (die-dev) with the extensions installed on top, their keys, their faces in mono-dark and the jellyfish to open on"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.95"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+# The binary is `die`, as DIE's own config's is: `cargo xtask app --config DIR` builds it into
+# DIE.app.
+[[bin]]
+name = "die"
+path = "src/main.rs"
+
+# DIE's crates come from DIE's repository and each extension from its own, all at `main`, never
+# a `rev`: every repository in one build then resolves to the same die-core, and the extensions'
+# `Extension` is DIE's. A local, gitignored `.cargo/config.toml` patches them to checkouts while
+# you develop (dev-config.example.toml, README).
+#
+# Installing an extension is its line here and its entry in `extensions()` (src/lib.rs);
+# removing one is deleting both, and its keys and faces.
+[dependencies]
+die = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
+die-dev = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
+# Your emacs-orchid-client's port, as init.el loads emacs-orchid-client: `\o`.
+die-orchid-client = { git = "https://github.com/0xDEADBEE7/die-orchid-client", branch = "main" }
+# The whiteboard: freehand, shapes and arrows, saved as SVG, exported as PNG: `\w`.
+die-whiteboard = { git = "https://github.com/0xDEADBEE7/die-whiteboard", branch = "main" }
+# Your ASCII jellyfish, the buffer DIE opens on.
+die-jellyfish = { git = "https://github.com/0xDEADBEE7/die-jellyfish", branch = "main" }
+# A markdown file's rendered view: `\m`.
+die-markdown = { git = "https://github.com/0xDEADBEE7/die-markdown", branch = "main" }
+# Figures from data, charts, graphs, gantt charts and dashboards: `\v`.
+die-fig = { git = "https://github.com/0xDEADBEE7/die-fig", branch = "main" }
+
+# die-test-cap is the memory limit inside every test binary, as in DIE.
+[dev-dependencies]
+die-test-cap = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
+
+# DIE's own: the terminal engine's sys crate links Ghostty's signed archive rather than building
+# it with Zig (DIE's D16, D17). A `[patch]` in DIE's manifest reaches only DIE's workspace, so a
+# config outside it carries the same one, naming DIE's package (crates/die-term-sys, whose
+# package name is libghostty-vt-sys) by DIE's git source.
+[patch."https://github.com/uzaaft/libghostty-rs"]
+libghostty-vt-sys = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+# As DIE's: DIE.app's build keeps enough debug info for a panic's backtrace.
+[profile.release]
+debug = "line-tables-only"
+
+# As DIE's: the tests draw figures and pages, slow unoptimized; enough debug info for a panic's
+# backtrace.
+[profile.test]
+opt-level = 1
+debug = "line-tables-only"
