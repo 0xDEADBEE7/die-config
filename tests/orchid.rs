@@ -1,8 +1,8 @@
-//! Your orchid client through your config, as you'd use it: `\o`, `RET` on a session, typing and
-//! sending, the turn's events coming in, `TAB`, `S-Tab` back to the browser and `q`, over DIE's
-//! own extensions with your keys, your Evil, your text defaults (80 columns, centered) and `\z`,
-//! across splits and buffer switches. The extension is the one your config registers, made for a
-//! test: its root under a temporary directory and orchid faked, as yours would read your
+//! The orchid client through this config, as you'd use it: `\o`, `RET` on a session, typing and
+//! sending, the turn's events coming in, `TAB`, `S-Tab` back to the browser and `q`, over DIE's own
+//! extensions with die-dev's keys, die-vim, die-dev's text defaults (80 columns, centered) and
+//! `\z`, across splits and buffer switches. The extension is the one this config registers, made
+//! for a test: its root under a temporary directory and orchid faked, where the real one would read
 //! `~/.config/orchid`. Nothing runs orchid.
 
 use die_test_cap as _;
@@ -19,15 +19,15 @@ use std::time::Duration;
 const ID: &str = "0f1e2d3c-aaaa-bbbb-cccc-123456789abc";
 const CHAT: &str = "*orchid-chat-default-die-89abc*";
 
-/// Your config's keys, theme and text defaults over DIE's own extensions, as `die::start` puts
-/// them together, with your config's orchid made for a test.
+/// This config's keys, theme and text defaults over DIE's own extensions, as `die::start` puts
+/// them together, with this config's orchid made for a test.
 fn harness(root: &TempRoot, fake: &FakeRunner) -> Harness {
     let config = die_config::config(vec![]);
     let names: Vec<&str> = config.extensions.iter().map(|e| e.name()).collect();
     assert_eq!(
         names,
         ["orchid", "whiteboard", "jellyfish", "markdown", "fig"],
-        "your config's extensions"
+        "this config's extensions"
     );
     let mut exts = die::built_in();
     exts.push(Box::new(Orchid::for_tests(root.path(), fake.clone())));
@@ -102,7 +102,7 @@ fn focused(h: &Harness) -> (WindowId, BufferId) {
 }
 
 #[test]
-fn leader_o_a_chat_a_turn_and_back_through_your_config() {
+fn leader_o_a_chat_a_turn_and_back_through_this_config() {
     let root = TempRoot::new("die-config-orchid");
     let fake = FakeRunner::new();
     sends(&fake, &root);
@@ -118,7 +118,7 @@ fn leader_o_a_chat_a_turn_and_back_through_your_config() {
     let mut h = harness(&root, &fake);
     assert_eq!(h.next_timer(), None, "nothing of orchid's runs before \\o");
 
-    // \o: the browser in this window, at 78 columns centred in your 80.
+    // \o: the browser in this window, at 78 columns centred in the 80.
     keys(&mut h, "\\o");
     let (w, b) = focused(&h);
     assert_eq!(h.buffer_name(b), Some(BUFFER));

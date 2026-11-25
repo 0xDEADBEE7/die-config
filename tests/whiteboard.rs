@@ -1,7 +1,7 @@
-//! The whiteboard through your config: it comes in through `die::Config.extensions`, `\w` opens
-//! a scratch board in normal state, with no prompt and no file until `S` asks where, `\hk`
-//! describes its keys, its inks take mono-dark's colours, and a board drawn with your text
-//! defaults is 80 columns centred until `\z`. Nothing is written outside a temporary directory.
+//! The whiteboard through this config: it comes in through `die::Config.extensions`, `\w` opens a
+//! scratch board in normal state, with no prompt and no file until `S` asks where, `\hk` describes
+//! its keys, its inks take mono-dark's colours, and a board drawn with die-dev's text defaults is
+//! 80 columns centred until `\z`. Nothing is written outside a temporary directory.
 
 use die_test_cap as _;
 
@@ -15,7 +15,7 @@ fn harness() -> Harness {
     assert_eq!(
         names,
         ["orchid", "whiteboard", "jellyfish", "markdown", "fig"],
-        "your config's extensions"
+        "this config's extensions"
     );
     let mut exts = die::built_in();
     exts.extend(config.extensions);
@@ -42,7 +42,7 @@ fn tree(name: &str) -> PathBuf {
 }
 
 #[test]
-fn leader_w_opens_a_scratch_board_and_a_board_has_your_keys_and_colours() {
+fn leader_w_opens_a_scratch_board_and_a_board_has_the_configs_keys_and_colours() {
     let dir = tree("leader");
     let mut h = harness();
     let notes = h.find_buffer("notes").unwrap();
@@ -75,7 +75,7 @@ fn leader_w_opens_a_scratch_board_and_a_board_has_your_keys_and_colours() {
     assert_eq!(
         (g.text_x, g.text_w),
         (20, 80),
-        "your text defaults, centred"
+        "die-dev's text defaults, centred"
     );
     keys(&mut h, "\\z");
     h.run_until_idle();
@@ -91,7 +91,7 @@ fn leader_w_opens_a_scratch_board_and_a_board_has_your_keys_and_colours() {
         h.describe_key(&events).unwrap().action,
         KeyAction::Command { ref name, .. } if name == "whiteboard-ink"
     ));
-    // Your leader's keys still reach their commands from a board.
+    // The leader's keys still reach their commands from a board.
     keys(&mut h, "\\]");
     assert!(h.prompt_text().is_some());
     keys(&mut h, "<Esc>");
@@ -122,7 +122,7 @@ fn leader_w_opens_a_scratch_board_and_a_board_has_your_keys_and_colours() {
     let _ = std::fs::remove_dir_all(&dir);
 }
 
-/// The cells your DIE has at 16 pt on a 2x display, so a board makes its pixel buffer.
+/// The cells DIE has at 16 pt on a 2x display, so a board makes its pixel buffer.
 const CELL: die::core::CellPixels = die::core::CellPixels {
     width: 19,
     height: 40,
@@ -177,7 +177,7 @@ fn alpha_at(h: &mut Harness, (bx, by): (f32, f32)) -> u8 {
     px[((y * w + x) * 4 + 3) as usize]
 }
 
-/// A DIE on your config, keeping its session in `state`, with the whiteboard's boards back.
+/// A DIE on this config, keeping its session in `state`, with the whiteboard's boards back.
 fn up(state: &std::path::Path) -> Harness {
     let mut config = die_config::config(vec![]);
     config.core.session = Some(state.to_path_buf());
@@ -192,7 +192,7 @@ fn up(state: &std::path::Path) -> Harness {
 }
 
 #[test]
-fn a_board_drawn_in_pixels_through_your_config_exports_splits_and_survives_two_restarts() {
+fn a_board_drawn_in_pixels_through_this_config_exports_splits_and_survives_two_restarts() {
     let dir = tree("pixels");
     let state = tree("pixels-state");
     let mut h = up(&state);
@@ -213,7 +213,7 @@ fn a_board_drawn_in_pixels_through_your_config_exports_splits_and_survives_two_r
     assert_eq!(
         (bw, bh),
         (80 * 19, g.rows as u32 * 40),
-        "your 80 columns at 19 by 40"
+        "the 80 columns at 19 by 40"
     );
     // A stroke in mono-dark's red, a rectangle, an arrow, a label.
     keys(&mut h, "2");
@@ -242,7 +242,7 @@ fn a_board_drawn_in_pixels_through_your_config_exports_splits_and_survives_two_r
         .with_ext(|wb: &mut Whiteboard, _| wb.boards().len())
         .unwrap();
     assert_eq!(wb, 1);
-    // Export: the PNG beside the file, from the model, at your 2x, where `E` asks first.
+    // Export: the PNG beside the file, from the model, at 2x, where `E` asks first.
     keys(&mut h, "E<CR>");
     h.run_until_idle();
     let png = dir.join("talk.png");

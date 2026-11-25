@@ -1,6 +1,6 @@
-//! Your config: die-dev's with the extensions on top, through `die_dev::config_with`, as
+//! This config: die-dev's with the extensions on top, through `die_dev::config_with`, as
 //! `die_dev::main_with` makes it. Its extensions come in, in order, their keys are bound over
-//! die-dev's, only bindings whose commands exist (C8, at every checkpoint), and every face your
+//! die-dev's, only bindings whose commands exist (C8, at every checkpoint), and every face its
 //! theme styles is one someone declares.
 
 use die_test_cap as _;
@@ -27,13 +27,13 @@ fn every_binding_names_a_command_that_exists() {
 /// `\m` only where there's markdown, die-dev's own keys under them, and nothing said about a face:
 /// the theme styles the extensions' faces, and each is declared.
 #[test]
-fn your_extensions_come_in_with_their_keys_over_die_devs_and_their_faces() {
+fn the_extensions_come_in_with_their_keys_over_die_devs_and_their_faces() {
     let config = config(vec![]);
     let names: Vec<&str> = config.extensions.iter().map(|e| e.name()).collect();
     assert_eq!(
         names,
         ["orchid", "whiteboard", "jellyfish", "markdown", "fig"],
-        "your config's extensions"
+        "this config's extensions"
     );
     assert!(config.files.is_empty());
     let ctx = die::start(config).unwrap();
@@ -61,7 +61,7 @@ fn your_extensions_come_in_with_their_keys_over_die_devs_and_their_faces() {
 
 /// emacs-orchid-client's port comes in through `die::Config.extensions`, its commands with it, and
 /// `\o` runs `orchid` in normal state, as `init.el` binds it. Only `describe-key` asks, so none of
-/// orchid's commands runs, and nothing reads your `~/.config/orchid`.
+/// orchid's commands runs, and nothing reads `~/.config/orchid`.
 #[test]
 fn orchid_comes_in_through_the_config_and_leader_o_opens_it() {
     let ctx = die::start(config(vec![])).unwrap();

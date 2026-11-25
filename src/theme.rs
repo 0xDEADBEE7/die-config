@@ -1,8 +1,7 @@
-//! The extensions' faces in mono-dark, your Emacs theme: die-dev's `mono_dark` styles core's
-//! faces only, as DIE reports a face a theme styles that no one declared, so each extension's
-//! faces are styled here, in mono-dark's palette (`die_dev::theme`). They're as DIE's config had
-//! them before the extensions left it, each noting the Emacs face or stylesheet rule it comes
-//! from.
+//! The extensions' faces in mono-dark, the owner's Emacs theme: die-dev's `mono_dark` styles core's
+//! faces only, as DIE reports a face a theme styles that no one declared, so each extension's faces
+//! are styled here, in mono-dark's palette (`die_dev::theme`). They're as DIE's config had them
+//! before the extensions left it, each noting the Emacs face or stylesheet rule it comes from.
 
 use die::core::{Rgb, Style, Theme, Underline};
 use die_dev::theme::{BG_HL, BG_SUBTLE, BORDER, FG, FG_BRIGHT, FG_DIM, FG_MID, RED};
@@ -10,10 +9,10 @@ use die_dev::theme::{BG_HL, BG_SUBTLE, BORDER, FG, FG_BRIGHT, FG_DIM, FG_MID, RE
 /// fig's gridlines: a step off the ground, under the border's grey.
 const GRID: Rgb = Rgb::hex("#2a2a2a");
 
-/// highlight.js's grayscale-dark, which your preview colours code blocks with
-/// (`markdown-xwidget`'s `highlight_css/grayscale-dark.css`): its base16 greys by the role it
-/// gives each. Comments are base03's #525252 lifted to #545454, the least that reads at 2:1 on
-/// a page's code panel, as `Palette::mono_dark` has it.
+/// highlight.js's grayscale-dark, which the owner's Emacs markdown preview colours code blocks with
+/// (`markdown-xwidget`'s `highlight_css/grayscale-dark.css`): its base16 greys by the role it gives
+/// each. Comments are base03's #525252 lifted to #545454, the least that reads at 2:1 on a page's
+/// code panel, as `Palette::mono_dark` has it.
 const CODE_COMMENT: Rgb = Rgb::hex("#545454"); // base03
 const CODE_FUNCTION: Rgb = Rgb::hex("#686868"); // base0D: functions, headings
 const CODE_META: Rgb = Rgb::hex("#5e5e5e"); // base0F
@@ -22,17 +21,17 @@ const CODE_VARIABLE: Rgb = Rgb::hex("#7c7c7c"); // base08: variables, tags, dele
 const CODE_STRING: Rgb = Rgb::hex("#8e8e8e"); // base0B: strings, additions
 const CODE_CONSTANT: Rgb = Rgb::hex("#999999"); // base09: numbers, literals, attributes
 
-/// Your theme: die-dev's mono-dark with the extensions' faces.
+/// This config's theme: die-dev's mono-dark with the extensions' faces.
 pub fn mono_dark() -> Theme {
     faces(die_dev::theme::mono_dark())
 }
 
 /// `theme` with the extensions' faces styled: the orchid faces whose Emacs faces no base face
-/// matches, the whiteboard dial's two, fig's chrome, and the markdown view's, from the
-/// stylesheet your preview uses (`markdown-xwidget`'s `resources/mono-dark.css`). A
-/// markdown page takes its colours from the same faces, and `tests/markdown.rs` holds them to the
-/// stylesheet's. fig's series and status faces are left unstyled, so a figure's data takes fig's
-/// validated colours for a dark ground.
+/// matches, the whiteboard dial's two, fig's chrome, and the markdown view's, from the stylesheet
+/// the owner's Emacs preview uses (`markdown-xwidget`'s `resources/mono-dark.css`). A markdown page
+/// takes its colours from the same faces, and `tests/markdown.rs` holds them to the stylesheet's.
+/// fig's series and status faces are left unstyled, so a figure's data takes fig's validated
+/// colours for a dark ground.
 pub fn faces(theme: Theme) -> Theme {
     let s = Style::new;
     theme
@@ -42,7 +41,7 @@ pub fn faces(theme: Theme) -> Theme {
         // seek's search line, `(:background "#3a3a3a")`, which the session browser draws while
         // you type a query.
         .face("orchid-seek-search", s().bg(BORDER))
-        // The whiteboard's tool dial, in the grey and the one accent your theme already has:
+        // The whiteboard's tool dial, in the grey and the one accent mono-dark already has:
         // its names, readout keys and line art in the mid grey; the hovered name's chip, the
         // hovered stretch of its ring, the needle's dot and the readout's value in the red.
         .face("whiteboard-dial", s().fg(FG_MID))

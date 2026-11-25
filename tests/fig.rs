@@ -1,18 +1,18 @@
-//! fig through your config: it comes in through `die::Config.extensions`, `\v` on a CSV shows
+//! fig through this config: it comes in through `die::Config.extensions`, `\v` on a CSV shows
 //! its chart in the window on mono-dark's ground and goes back, the pointer's hover draws its
 //! card in the overlay alone, `\v` in visual state charts the selection, `\hk` describes a
 //! figure's key, `\z` works on a figure, mono-dark styles fig's chrome and not its data's
 //! colours, and nothing of fig's runs before `\v` or after it's gone. And the whole round trip
 //! as you'd make it: a CSV, `\v`, a hover bringing a series forward with its card, a brush, the
 //! wheel, ⌘-wheel and `+`, an edit of the CSV in a split that the chart follows, and `\v` back.
-//! And a `.fig` file through your config: it opens as its figure, `\v` flips it to its text and
+//! And a `.fig` file through this config: it opens as its figure, `\v` flips it to its text and
 //! back, and one that can't draw shows the symbolic error figure, its log a `!` away. And a
 //! graph: `\v` on a graph's JSON, a node's hover and its dwell, a click, the detail panel and a
 //! yank through die-vim's kill ring, back to the text, and a `.fig` of a graph opening as it.
 //! And a graph as you'd use it, start to end: services.json opened, `\v` and its layout's frame,
 //! a hover's dwell with its card, a click, h j k l, a node dragged and pinned, `u` and `<C-r>`,
 //! a pan, a ⌘-wheel zoom, the panel and Tab into it, `/` as it's typed and Esc, `t`, `0`, an edit
-//! of the JSON the graph follows with the pin kept, and `\v` back. And a dashboard through your
+//! of the JSON the graph follows with the pin kept, and `\v` back. And a dashboard through this
 //! config: health.fig opens as its dashboard, a hover on a linked chart, `Tab` to a panel, `f`
 //! full size and back, `T` to the last hour, and `\v` to its text and back. And dashboards as
 //! you'd use them, start to end, in a process with a HOME of its own: health.fig's panels
@@ -44,7 +44,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::Duration;
 
-/// Your cells on your panel: 19 by 40 pixels at 2x.
+/// DIE's cells at 16 pt on a 2x display: 19 by 40 pixels.
 const CELL: CellPixels = CellPixels {
     width: 19,
     height: 40,
@@ -68,7 +68,7 @@ fn harness() -> Harness {
     let names: Vec<&str> = config.extensions.iter().map(|e| e.name()).collect();
     assert!(
         names.contains(&"fig"),
-        "your config's extensions: {names:?}"
+        "this config's extensions: {names:?}"
     );
     let mut exts = die::built_in();
     exts.extend(config.extensions);
@@ -195,7 +195,7 @@ fn describe_key_on_a_figure_names_figs_commands_and_leader_z_works_there() {
     let help = h.find_buffer("*help*").expect("*help*");
     let text = h.text(help).unwrap().rope().to_string();
     assert!(text.contains("fig-right"), "{text}");
-    // \z on a figure: the column your config centres, and back.
+    // \z on a figure: the column this config centres, and back.
     let fig = h.find_buffer("requests.csv *fig*").unwrap();
     h.show(fig, die::core::ShowIn::Current).unwrap();
     h.run_until_idle();
@@ -237,7 +237,7 @@ fn presents(h: &mut Harness) -> Vec<(PixelBufferId, PixelRect)> {
         .collect()
 }
 
-/// A pointer event at a logical point of a window's area, on your cells.
+/// A pointer event at a logical point of a window's area, on those cells.
 fn pointer(
     h: &mut Harness,
     win: WindowId,

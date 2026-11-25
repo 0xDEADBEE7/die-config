@@ -29,14 +29,14 @@ pub fn extra() -> Extra {
     }
 }
 
-/// Your config, for these files: die-dev's with [`extra`] on top, as `--check` and the tests
+/// This config, for these files: die-dev's with [`extra`] on top, as `--check` and the tests
 /// know it, a still text buffer with no greeting ([`die_dev::greeted`] adds that for a run you
 /// look at).
 pub fn config(files: Vec<PathBuf>) -> die::Config {
     die_dev::config_with(files, extra())
 }
 
-/// What a run you look at opens on when no file is named: your jellyfish, in the directory DIE
+/// What a run you look at opens on when no file is named: the jellyfish, in the directory DIE
 /// started in (`die_dev::greeted` says when).
 pub fn greeting() -> Greeting {
     Greeting {
@@ -45,20 +45,20 @@ pub fn greeting() -> Greeting {
     }
 }
 
-/// The packages your `init.el` loads, as DIE has them: emacs-orchid-client's port, with its
-/// defaults, as you set none of its options. It finds `orchid` on your login shell's PATH, which
+/// The packages the owner's `init.el` loads, as DIE has them: emacs-orchid-client's port, with its
+/// defaults, as they set none of its options. It finds `orchid` on the login shell's PATH, which
 /// has `~/.local/bin`, as `init.el` adds it to `exec-path`. And the whiteboard, with its defaults:
-/// PNGs at 2x on the theme's background, the fonts where DIE's are. And your jellyfish, with its
+/// PNGs at 2x on the theme's background, the fonts where DIE's are. And the jellyfish, with its
 /// defaults: the water's dust and twinkles but no shoal, the window's whole width, and at rest
-/// after five minutes without a key. Registering it shows nothing: the greeting does that. And
-/// the markdown view, with its defaults: the mode on `.md` files and markdown-mode's other
-/// extensions, front matter hidden as your preview's export strips it, links that aren't
-/// files DIE opens going to `open`, and the rendered view a page drawn as GitHub draws one, in
-/// mono-dark's colours. A file opens raw, as it always has: `\m` renders it. And fig, with its
-/// defaults: times in the system's zone, the fonts where DIE's are, the chrome in mono-dark's
-/// greys, a `.fig` or `.fig.json` file opening as its figure (`\v` flips it to its text and
-/// back), and `y` in its detail panel copying as Evil's `y` does, to the clipboard and the kill
-/// ring. Nothing of it runs until `\v` or a figure's file.
+/// after five minutes without a key. Registering it shows nothing: the greeting does that. And the
+/// markdown view, with its defaults: the mode on `.md` files and markdown-mode's other extensions,
+/// front matter hidden as the owner's Emacs preview's export strips it, links that aren't files DIE
+/// opens going to `open`, and the rendered view a page drawn as GitHub draws one, in mono-dark's
+/// colours. A file opens raw, as it always has: `\m` renders it. And fig, with its defaults: times
+/// in the system's zone, the fonts where DIE's are, the chrome in mono-dark's greys, a `.fig` or
+/// `.fig.json` file opening as its figure (`\v` flips it to its text and back), and `y` in its
+/// detail panel copying as Evil's `y` does, to the clipboard and the kill ring. Nothing of it runs
+/// until `\v` or a figure's file.
 pub fn extensions() -> Vec<Box<dyn Extension>> {
     vec![
         Box::new(die_orchid_client::Orchid::default()),

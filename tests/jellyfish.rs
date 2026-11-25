@@ -1,4 +1,4 @@
-//! Your jellyfish as the buffer DIE starts on: this config's greeting, through
+//! The jellyfish as the buffer DIE starts on: this config's greeting, through
 //! `die_dev::greeted` and `die::start`, which is everything a real run does before its window
 //! opens: when it shows, when it stays away, and what a session keeps of it. No window opens, and
 //! each session lives in a temporary directory.
@@ -11,7 +11,7 @@ use die_config::{config, greeting};
 use die_jellyfish::NAME;
 use std::path::{Path, PathBuf};
 
-/// Your config as `main` makes it for a run you look at: with your greeting.
+/// This config as `main` makes it for a run you look at: with its greeting.
 fn greeted(config: die::Config, launch: &Launch) -> die::Config {
     die_dev::greeted(config, launch, Some(greeting()))
 }

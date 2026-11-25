@@ -1,6 +1,6 @@
-//! The markdown view through your config: it comes in through `die::Config.extensions`, `\m` is
-//! a key in a markdown file and on its page and nowhere else, a page takes mono-dark's colours
-//! as your preview's stylesheet has them, and so does the view in place, where there are no
+//! The markdown view through this config: it comes in through `die::Config.extensions`, `\m` is a
+//! key in a markdown file and on its page and nowhere else, a page takes mono-dark's colours as the
+//! owner's Emacs preview's stylesheet has them, and so does the view in place, where there are no
 //! pixels to draw a page with. Nothing is written outside a temporary directory.
 
 use die_test_cap as _;
@@ -12,14 +12,14 @@ use std::path::PathBuf;
 
 const NOTES: &str = "# Notes\n\nA [link](https://example.com), `code` and **bold**.\n\n---\n";
 
-/// Your cells on your panel: 19 by 40 pixels at 2x.
+/// DIE's cells at 16 pt on a 2x display: 19 by 40 pixels.
 const CELL: CellPixels = CellPixels {
     width: 19,
     height: 40,
     scale: 2.0,
 };
 
-/// Your config, with the markdown extension as it has it, or the one given in its place.
+/// This config, with the markdown extension as it has it, or the one given in its place.
 fn harness(markdown: Option<Markdown>) -> Harness {
     let config = die_config::config(vec![]);
     let mut exts = die::built_in();
@@ -52,7 +52,7 @@ fn keys(h: &mut Harness, k: &str) {
     }
 }
 
-/// The cells of a row from where its text starts: your 80 columns are centred in 120.
+/// The cells of a row from where its text starts: the 80 columns are centred in 120.
 fn row(h: &mut Harness, r: usize) -> Vec<Cell> {
     h.scene().row(r)[20..100].to_vec()
 }
@@ -85,7 +85,7 @@ fn leader_m_shows_a_markdown_file_as_a_page_and_the_file_again_and_is_no_key_els
     assert_eq!((wide, tall), (120 * CELL.width, 40 * CELL.height));
     assert_eq!(px[..4], [0x1a, 0x1a, 0x1a, 255]);
     assert!(px.chunks_exact(4).any(|p| p != [0x1a, 0x1a, 0x1a, 255]));
-    // Your `\z` narrows a page to your 80 columns, as it does any buffer.
+    // `\z` narrows a page to the 80 columns, as it does any buffer.
     keys(&mut h, "\\z");
     let placed = h.scene().placements[0];
     assert_eq!((placed.col, placed.cols), (20, 80));
@@ -99,7 +99,7 @@ fn leader_m_shows_a_markdown_file_as_a_page_and_the_file_again_and_is_no_key_els
 }
 
 #[test]
-fn a_page_in_your_themes_colours_is_in_the_stylesheets() {
+fn a_page_in_the_themes_colours_is_in_the_stylesheets() {
     let h = harness(None);
     let (read, sheet) = (die_markdown::theme_palette(&h), Palette::mono_dark());
     // Field for field, so a face that drifts from the stylesheet is the one named.

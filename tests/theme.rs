@@ -1,6 +1,6 @@
-//! Your theme, die-dev's mono-dark with the extensions' faces: every base and UI face, the orchid
-//! faces whose Emacs faces no base face matches, the whiteboard dial's, fig's chrome and the
-//! markdown view's, and only faces core or one of your extensions declares.
+//! This config's theme, die-dev's mono-dark with the extensions' faces: every base and UI face, the
+//! orchid faces whose Emacs faces no base face matches, the whiteboard dial's, fig's chrome and the
+//! markdown view's, and only faces core or one of its extensions declares.
 
 use die_test_cap as _;
 
@@ -36,7 +36,7 @@ fn mono_dark_styles_every_core_face_and_the_extensions_and_only_those_declared()
             "{name} is no core, orchid, markdown, whiteboard or fig face"
         );
     }
-    // The markdown view draws in your stylesheet's colours: each of its faces is styled here.
+    // The markdown view draws in the stylesheet's colours: each of its faces is styled here.
     for (name, ..) in markdown {
         assert!(t.faces.contains_key(name), "mono-dark doesn't style {name}");
     }
