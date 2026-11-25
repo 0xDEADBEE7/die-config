@@ -22,6 +22,7 @@ is the model DIE's scope sets out: a personal config as a binary crate, as in xm
 | [die-jellyfish](https://github.com/0xDEADBEE7/die-jellyfish) | An ASCII jellyfish | the greeting; `:jellyfish` |
 | [die-markdown](https://github.com/0xDEADBEE7/die-markdown) | A markdown file's rendered view, a page drawn as GitHub draws a README | `\m` in a markdown file and on its page |
 | [die-fig](https://github.com/0xDEADBEE7/die-fig) | Figures from data: charts, network graphs, gantt charts and dashboards | `\v` in normal and visual state |
+| [die-scribble](https://github.com/0xDEADBEE7/die-scribble) | A note browser: search a directory of markdown notes by name and open one | `\s` in normal state |
 
 Each extension's README has its keys and how to use it. Here they're as die-dev had them before
 the extensions left DIE: each with its defaults, but fig, which opens a `.fig` or `.fig.json` file

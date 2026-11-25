@@ -23,7 +23,7 @@ fn every_binding_names_a_command_that_exists() {
     die::start(config(vec![])).unwrap();
 }
 
-/// The five extensions in the order `extensions()` lists them, `\o`, `\w` and `\v` everywhere and
+/// The six extensions in the order `extensions()` lists them, `\o`, `\w` and `\v` everywhere and
 /// `\m` only where there's markdown, die-dev's own keys under them, and nothing said about a face:
 /// the theme styles the extensions' faces, and each is declared.
 #[test]
@@ -32,7 +32,14 @@ fn the_extensions_come_in_with_their_keys_over_die_devs_and_their_faces() {
     let names: Vec<&str> = config.extensions.iter().map(|e| e.name()).collect();
     assert_eq!(
         names,
-        ["orchid", "whiteboard", "jellyfish", "markdown", "fig"],
+        [
+            "orchid",
+            "whiteboard",
+            "jellyfish",
+            "markdown",
+            "fig",
+            "scribble"
+        ],
         "this config's extensions"
     );
     assert!(config.files.is_empty());
@@ -41,6 +48,7 @@ fn the_extensions_come_in_with_their_keys_over_die_devs_and_their_faces() {
         ("\\o", "orchid"),
         ("\\w", "whiteboard"),
         ("\\v", "fig-toggle"),
+        ("\\s", "scribble"),
         ("\\f", "find-file"),
         ("\\z", "toggle-max-width"),
     ] {

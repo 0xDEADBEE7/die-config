@@ -72,6 +72,7 @@ pub fn extensions() -> Vec<Box<dyn Extension>> {
             })
             .copying_with(die::vim::kill_new),
         ),
+        Box::new(die_scribble::Scribble::default()),
     ]
 }
 
@@ -85,9 +86,11 @@ pub fn bindings(reg: &mut Registry) {
     // new scratch board.
     keys.bind(State::Normal, "<leader>w", "whiteboard");
     // fig: this buffer's data as a figure, or from a figure its buffer again; in visual state,
-    // the selection's. `\g`, `\d`, `\s` and `\t` are taken in init.el.
+    // the selection's. `\g`, `\d` and `\t` are taken in init.el.
     keys.bind(State::Normal, "<leader>v", "fig-toggle");
     keys.bind(State::Visual, "<leader>v", "fig-toggle");
+    // scribble: the notes in ~/.config/scribble/, searched by name, as `\s` opens scrib in init.el.
+    keys.bind(State::Normal, "<leader>s", "scribble");
     // A markdown file's two views, rendered and raw. It's in the mode's keymap, so `\m` is a key
     // only where there's markdown to render, and in the page's, which is a buffer of its own
     // with no mode: `\m` there goes back to the file. Both only where the extension is.

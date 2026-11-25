@@ -18,6 +18,7 @@ extensions, their keys and their colours on top.
 - [die-jellyfish](https://github.com/0xDEADBEE7/die-jellyfish): the start-up jellyfish (`:jellyfish`)
 - [die-markdown](https://github.com/0xDEADBEE7/die-markdown): a rendered view of a markdown file (`\m`)
 - [die-fig](https://github.com/0xDEADBEE7/die-fig): charts, graphs, gantt charts and dashboards (`\v`)
+- [die-scribble](https://github.com/0xDEADBEE7/die-scribble): search your markdown notes by name and open one (`\s`)
 
 ## Add or remove an extension
 

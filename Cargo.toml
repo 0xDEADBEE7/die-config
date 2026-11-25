@@ -32,6 +32,8 @@ die-orchid-client = { git = "https://github.com/0xDEADBEE7/die-orchid-client", b
 die-whiteboard = { git = "https://github.com/0xDEADBEE7/die-whiteboard", branch = "main" }
 # The owner's ASCII jellyfish, the buffer DIE opens on.
 die-jellyfish = { git = "https://github.com/0xDEADBEE7/die-jellyfish", branch = "main" }
+# Notes: a browser that searches a directory of markdown notes and opens one: `\s`.
+die-scribble = { git = "https://github.com/0xDEADBEE7/die-scribble", branch = "main" }
 # A markdown file's rendered view: `\m`.
 die-markdown = { git = "https://github.com/0xDEADBEE7/die-markdown", branch = "main" }
 # Figures from data, charts, graphs, gantt charts and dashboards: `\v`.

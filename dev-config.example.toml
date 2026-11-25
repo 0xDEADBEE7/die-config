@@ -38,6 +38,9 @@ die-whiteboard = { path = "../die-whiteboard" }
 [patch."https://github.com/0xDEADBEE7/die-jellyfish"]
 die-jellyfish = { path = "../die-jellyfish" }
 
+[patch."https://github.com/0xDEADBEE7/die-scribble"]
+die-scribble = { path = "../die-scribble" }
+
 [patch."https://github.com/0xDEADBEE7/die-markdown"]
 die-markdown = { path = "../die-markdown" }
 
