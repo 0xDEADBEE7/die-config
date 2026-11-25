@@ -315,6 +315,7 @@ dependencies = [
  "die-jellyfish",
  "die-markdown",
  "die-orchid-client",
+ "die-scribble",
  "die-test-cap",
  "die-whiteboard",
 ]
@@ -417,6 +418,14 @@ dependencies = [
  "rustix 1.1.5",
  "unicode-width",
  "winit",
+]
+
+[[package]]
+name = "die-scribble"
+version = "0.0.0"
+source = "git+https://github.com/0xDEADBEE7/die-scribble?branch=main#996d9dda8efef5da4983263460828e19011e0325"
+dependencies = [
+ "die-core",
 ]
 
 [[package]]
