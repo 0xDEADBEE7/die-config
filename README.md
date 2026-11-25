@@ -48,7 +48,7 @@ In a DIE checkout, `cargo xtask app` builds DIE.app from the first config it fin
 3. else `die-config` beside the checkout (`../die-config`), if it has a `Cargo.toml`;
 4. else DIE's own `apps/die-dev`, which has no extension.
 
-So with this repository at `../die-config` from DIE's checkout, a plain
+So with this repository checked out as `die-config` beside a DIE checkout, a plain
 `cargo xtask app` builds it. A config that's named has to be a crate, or the build stops and says
 so. Cargo runs in the config's own directory (`cargo build --release --bin die`), so this
 repository's `.cargo/config.toml` applies, and the binary is taken from the target directory
@@ -99,12 +99,13 @@ resolves to the same die-core and the extensions' `Extension` is DIE's.
 ## Developing it
 
 Without a dev config, DIE's crates and the extensions come from GitHub. To build against checkouts
-on the machine instead, copy `dev-config.example.toml` to `.cargo/config.toml`, which git ignores,
-and replace each `/abs/path/to/...` placeholder with an absolute path (cargo doesn't expand `~`):
+on the machine instead, copy `dev-config.example.toml` to `.cargo/config.toml`, which git ignores.
+Its paths are relative, for checkouts of DIE and the extensions beside this one (`../die`,
+`../die-fig`, ...), which cargo reads from this repository's root; change any that's elsewhere:
 
 ```sh
 mkdir -p .cargo
-cp dev-config.example.toml .cargo/config.toml   # then write out the paths
+cp dev-config.example.toml .cargo/config.toml   # for checkouts beside this one
 ```
 
 - `[patch."https://github.com/0xDEADBEE7/die"]` points every DIE crate the build takes (die,
