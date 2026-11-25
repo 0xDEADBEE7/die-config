@@ -50,9 +50,13 @@ In a DIE checkout, `cargo xtask app` builds DIE.app from the first config it fin
 
 So with this repository at `../die-config` from DIE's checkout, a plain
 `cargo xtask app` builds it. A config that's named has to be a crate, or the build stops and says
-so. Cargo runs in the config's own directory (`cargo build --release --bin die`, `--locked` when
-there's a `Cargo.lock`), so this repository's `.cargo/config.toml` applies, and the binary is
-taken from the target directory `cargo metadata` names there (so `CARGO_TARGET_DIR` works).
+so. Cargo runs in the config's own directory (`cargo build --release --bin die`), so this
+repository's `.cargo/config.toml` applies, and the binary is taken from the target directory
+`cargo metadata` names there (so `CARGO_TARGET_DIR` works). It isn't `--locked`, though any build
+here leaves a `Cargo.lock`: only DIE's own workspace, whose lock DIE's commits keep, builds locked.
+Nothing keeps this one current, as DIE's crates and the extensions reach it by path patches to
+checkouts whose exact pins move with their own commits, so a build brings it up to date, changing
+only what it must, rather than stopping at a dependency one of them added or bumped.
 `--home DIR` puts the bundle at `DIR/Applications/DIE.app` instead of your own.
 
 The bundle records where it came from: `Contents/Resources/checkout` names the DIE checkout and
