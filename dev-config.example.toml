@@ -1,4 +1,4 @@
-# Develop your config beside checkouts of DIE and the extensions: copy this file to
+# Develop this config beside checkouts of DIE and the extensions: copy this file to
 # `.cargo/config.toml` (which git ignores) and write your own paths for the `/abs/path/to/...`
 # placeholders. Cargo doesn't expand `~`, so they must be absolute, such as
 # `/Users/you/src/die/crates/die-core`.

@@ -11,23 +11,23 @@ die_dev::main_with(die_config::extra)
 ```
 
 and `extra()` (src/lib.rs) is a `die_dev::Extra { extensions, bindings, theme, greeting }`. This
-is scope §5.10's model, your personal config as a binary crate, as in xmonad.
+is the model DIE's scope sets out (§5.10): a personal config as a binary crate, as in xmonad.
 
 ## What it installs
 
 | Extension | What it is | Keys |
 |---|---|---|
-| [die-orchid-client](https://github.com/0xDEADBEE7/die-orchid-client) | Your emacs-orchid-client's port: orchid's session browser and chats | `\o` in normal state |
+| [die-orchid-client](https://github.com/0xDEADBEE7/die-orchid-client) | The owner's emacs-orchid-client, ported: orchid's session browser and chats | `\o` in normal state |
 | [die-whiteboard](https://github.com/0xDEADBEE7/die-whiteboard) | A whiteboard: freehand, shapes and arrows, saved as SVG, exported as PNG | `\w` in normal state |
-| [die-jellyfish](https://github.com/0xDEADBEE7/die-jellyfish) | Your ASCII jellyfish | the greeting; `:jellyfish` |
+| [die-jellyfish](https://github.com/0xDEADBEE7/die-jellyfish) | The owner's ASCII jellyfish | the greeting; `:jellyfish` |
 | [die-markdown](https://github.com/0xDEADBEE7/die-markdown) | A markdown file's rendered view, a page drawn as GitHub draws a README | `\m` in a markdown file and on its page |
 | [die-fig](https://github.com/0xDEADBEE7/die-fig) | Figures from data: charts, network graphs, gantt charts and dashboards | `\v` in normal and visual state |
 
 Each extension's README has its keys and how to use it. Here they're as die-dev had them before
 the extensions left DIE: each with its defaults, but fig, which opens a `.fig` or `.fig.json` file
 as its figure (`OpenAs::Figure`) and copies a yank in its detail panel through die-vim's kill ring
-(`copying_with(die::vim::kill_new)`). die-draw, the drawing library die-fig and die-markdown
-share, comes in through them.
+(`copying_with(die::vim::kill_new)`). [die-draw](https://github.com/0xDEADBEE7/die-draw), the
+drawing library die-fig and die-markdown share, comes in through them.
 
 **The greeting.** A run you look at, with no file named, opens on the jellyfish in the directory
 DIE started in (`die_dev::greeted` says when: never over a session's splits, a file, `--check`
@@ -36,8 +36,8 @@ or a restart that brought something back).
 **The theme.** die-dev's mono-dark styles core's faces only, since DIE reports a face a theme
 styles that no one declared. `theme::faces` styles the extensions' faces in its palette
 (`die_dev::theme`): the orchid faces no base face matches, the whiteboard dial's two, fig's chrome
-(its series and status faces are left to fig's own colours) and every markdown face, from your
-preview's stylesheet.
+(its series and status faces are left to fig's own colours) and every markdown face, from the
+owner's markdown preview stylesheet.
 
 ## Building DIE.app from it
 
@@ -52,12 +52,13 @@ So with this repository at `../die-config` from DIE's checkout, a plain
 `cargo xtask app` builds it. A config that's named has to be a crate, or the build stops and says
 so. Cargo runs in the config's own directory (`cargo build --release --bin die`), so this
 repository's `.cargo/config.toml` applies, and the binary is taken from the target directory
-`cargo metadata` names there (so `CARGO_TARGET_DIR` works). It isn't `--locked`, though any build
-here leaves a `Cargo.lock`: only DIE's own workspace, whose lock DIE's commits keep, builds locked.
-Nothing keeps this one current, as DIE's crates and the extensions reach it by path patches to
-checkouts whose exact pins move with their own commits, so a build brings it up to date, changing
-only what it must, rather than stopping at a dependency one of them added or bumped.
-`--home DIR` puts the bundle at `DIR/Applications/DIE.app` instead of your own.
+`cargo metadata` names there (so `CARGO_TARGET_DIR` works). It isn't `--locked`, though this
+repository has a `Cargo.lock`: only DIE's own workspace, whose lock DIE's commits keep, builds
+locked. Nothing keeps this one current, as DIE's crates and the extensions move on `main` with
+their own commits, and with the dev config reach it by path patches to checkouts, so a build
+brings it up to date, changing only what it must, rather than stopping at a dependency one of them
+added or bumped. `--home DIR` puts the bundle at `DIR/Applications/DIE.app` instead of
+`~/Applications/DIE.app`.
 
 The bundle records where it came from: `Contents/Resources/checkout` names the DIE checkout and
 `Contents/Resources/config` this config, as an absolute path. `:rebuild` in DIE runs
@@ -81,7 +82,7 @@ Installing one is four small edits:
   Box::new(die_fig::Fig::default()),
   ```
 
-- its keys, if it leaves any to your config, in `bindings()`, which runs after die-dev's so the
+- its keys, if it leaves any to the config, in `bindings()`, which runs after die-dev's so the
   leader is set and the extension's commands exist (every binding has to name a command that
   exists, or DIE won't start, and `tests/config.rs` checks):
 
@@ -89,7 +90,7 @@ Installing one is four small edits:
   keys.bind(State::Normal, "<leader>v", "fig-toggle");
   ```
 
-- its faces, if it declares any your theme should style, in `theme::faces`.
+- its faces, if it declares any the theme should style, in `theme::faces`.
 
 Removing one is deleting the same lines, and the tests here that exercise it. Every dependency
 from DIE or an extension is at `branch = "main"`, never a `rev`, so every repository in one build
@@ -97,10 +98,14 @@ resolves to the same die-core and the extensions' `Extension` is DIE's.
 
 ## Developing it
 
-Until you build against checkouts, DIE's crates and the extensions come from GitHub. To build
-against the checkouts on your machine, copy `dev-config.example.toml` to `.cargo/config.toml`,
-which git ignores, and replace each `/abs/path/to/...` placeholder with an absolute path (cargo
-doesn't expand `~`):
+Without a dev config, DIE's crates and the extensions come from GitHub. To build against checkouts
+on the machine instead, copy `dev-config.example.toml` to `.cargo/config.toml`, which git ignores,
+and replace each `/abs/path/to/...` placeholder with an absolute path (cargo doesn't expand `~`):
+
+```sh
+mkdir -p .cargo
+cp dev-config.example.toml .cargo/config.toml   # then write out the paths
+```
 
 - `[patch."https://github.com/0xDEADBEE7/die"]` points every DIE crate the build takes (die,
   die-dev, die-core, die-render, die-vim, die-term, die-test-cap) at a DIE checkout;
@@ -124,32 +129,14 @@ DIE_UNSEEN=1 cargo test
 ```
 
 The tests are die-dev's that exercised extensions before they left DIE: `\o` and a chat through
-your keys, `\w` and a board drawn, exported and restored, `\m` and a page in your stylesheet's
-colours, `\v` on CSVs, graphs and dashboards start to end, the jellyfish's greeting through
-`die_dev::greeted`, and the theme. They run through die-core's harness and need no window;
+the config's keys, `\w` and a board drawn, exported and restored, `\m` and a page in the preview
+stylesheet's colours, `\v` on CSVs, graphs and dashboards start to end, the jellyfish's greeting
+through `die_dev::greeted`, and the theme. They run through die-core's harness and need no window;
 `DIE_UNSEEN=1` keeps any that start DIE off the screen. **They need `DIE_FONT_DIR`**: a figure's
 and a page's text fall back on DIE's fonts. The dashboard test runs again in a process with a HOME
-of its own, so a live command's login shell reads no profile of yours. `tests/data/` holds the
-die-fig examples the fig tests read (`graphs/services.json`, `dash/`, `live/`), copied from
-die-fig's `examples/data` at the split.
-
-### Before the repositories are on GitHub
-
-Cargo asks a patched git source for its packages unless `Cargo.lock` already locks the dependency
-to the patch, so with no lock, and an extension's repository not on GitHub yet, it stops at
-`failed to load source for dependency`. Once a lock holds every patched package, cargo builds
-from the patches and doesn't look at GitHub for them. To make that first lock without the
-repositories:
-
-1. start from DIE's lock from before the split, which has the extensions and die-draw as path
-   packages: `git -C ../die show 4eaadf3:Cargo.lock > Cargo.lock`;
-2. turn the five extension lines in `Cargo.toml` into `path = "/abs/path/to/<name>"` dependencies
-   for a moment, and run `cargo metadata --format-version 1 > /dev/null`;
-3. put the git lines back and run it again: the lock now holds every DIE crate and extension at
-   your checkouts, and the third-party crates at DIE's versions.
-
-`Cargo.lock` isn't committed yet: with path patches it records local paths. The lock to commit is
-made after the push, against GitHub.
+of its own, so a live command's login shell reads no real profile. `tests/data/` holds the die-fig
+examples the fig tests read (`graphs/services.json`, `dash/`, `live/`), copied from die-fig's
+`examples/data` at the split.
 
 ## Licence
 

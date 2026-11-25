@@ -26,11 +26,11 @@ path = "src/main.rs"
 [dependencies]
 die = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
 die-dev = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
-# Your emacs-orchid-client's port, as init.el loads emacs-orchid-client: `\o`.
+# The owner's emacs-orchid-client, ported, as their init.el loads emacs-orchid-client: `\o`.
 die-orchid-client = { git = "https://github.com/0xDEADBEE7/die-orchid-client", branch = "main" }
 # The whiteboard: freehand, shapes and arrows, saved as SVG, exported as PNG: `\w`.
 die-whiteboard = { git = "https://github.com/0xDEADBEE7/die-whiteboard", branch = "main" }
-# Your ASCII jellyfish, the buffer DIE opens on.
+# The owner's ASCII jellyfish, the buffer DIE opens on.
 die-jellyfish = { git = "https://github.com/0xDEADBEE7/die-jellyfish", branch = "main" }
 # A markdown file's rendered view: `\m`.
 die-markdown = { git = "https://github.com/0xDEADBEE7/die-markdown", branch = "main" }
