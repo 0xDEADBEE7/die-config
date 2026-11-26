@@ -23,12 +23,14 @@ is the model DIE's scope sets out: a personal config as a binary crate, as in xm
 | [die-markdown](https://github.com/0xDEADBEE7/die-markdown) | A markdown file's rendered view, a page drawn as GitHub draws a README | `\m` in a markdown file and on its page |
 | [die-fig](https://github.com/0xDEADBEE7/die-fig) | Figures from data: charts, network graphs, gantt charts and dashboards | `\v` in normal and visual state |
 | [die-scribble](https://github.com/0xDEADBEE7/die-scribble) | A note browser: search a directory of markdown notes by name and open one | `\s` in normal state |
+| [die-delta](https://github.com/0xDEADBEE7/die-delta) | A git history browser: a repository's commits, the files each changed and their diffs | `\d` in normal state |
 
 Each extension's README has its keys and how to use it. Here they're as die-dev had them before
 the extensions left DIE: each with its defaults, but fig, which opens a `.fig` or `.fig.json` file
 as its figure (`OpenAs::Figure`) and copies a yank in its detail panel through die-vim's kill ring
-(`copying_with(die::vim::kill_new)`). [die-draw](https://github.com/0xDEADBEE7/die-draw), the
-drawing library die-fig and die-markdown share, comes in through them.
+(`copying_with(die::vim::kill_new)`), and delta, whose `y` and `Y` copy a hash the same way.
+[die-draw](https://github.com/0xDEADBEE7/die-draw), the drawing library die-fig and die-markdown
+share, comes in through them.
 
 ## The greeting
 
@@ -41,7 +43,8 @@ brought something back).
 die-dev's mono-dark styles core's faces only, since DIE reports a face a theme styles that no one
 declared. `theme::faces` styles the extensions' faces in its palette (`die_dev::theme`): the
 orchid faces no base face matches, the whiteboard dial's two, fig's chrome (its series and status
-faces are left to fig's own colours) and every markdown face, after a markdown preview stylesheet.
+faces are left to fig's own colours), every markdown face, after a markdown preview stylesheet,
+and delta's, but for its search line, which takes `highlight` as scribble's does.
 
 ## Installing and removing an extension
 

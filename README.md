@@ -6,7 +6,7 @@ extensions, their keys and their colours on top.
 ## What it does
 
 - Starts from `die-dev`, DIE's base config: its keys (leader `\`), theme and status line.
-- Adds five extensions, each from its own repository.
+- Adds seven extensions, each from its own repository.
 - Binds each extension to a short leader key.
 - Styles the extensions in the same mono-dark theme.
 - Opens on an ASCII jellyfish when DIE starts with no file.
@@ -19,6 +19,7 @@ extensions, their keys and their colours on top.
 - [die-markdown](https://github.com/0xDEADBEE7/die-markdown): a rendered view of a markdown file (`\m`)
 - [die-fig](https://github.com/0xDEADBEE7/die-fig): charts, graphs, gantt charts and dashboards (`\v`)
 - [die-scribble](https://github.com/0xDEADBEE7/die-scribble): search your markdown notes by name and open one (`\s`)
+- [die-delta](https://github.com/0xDEADBEE7/die-delta): your git history, its commits, the files each changed and their diffs (`\d`)
 
 ## Add or remove an extension
 

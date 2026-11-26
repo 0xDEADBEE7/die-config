@@ -47,6 +47,9 @@ die-markdown = { path = "../die-markdown" }
 [patch."https://github.com/0xDEADBEE7/die-fig"]
 die-fig = { path = "../die-fig" }
 
+[patch."https://github.com/0xDEADBEE7/die-delta"]
+die-delta = { path = "../die-delta" }
+
 # Where DIE's own fonts are (`cargo xtask fonts` in the DIE checkout fetches them). die-draw and
 # the whiteboard find them here, at run time and as built, and the tests that set text need them.
 [env]

@@ -58,7 +58,10 @@ pub fn greeting() -> Greeting {
 /// in the system's zone, the fonts where DIE's are, the chrome in mono-dark's greys, a `.fig` or
 /// `.fig.json` file opening as its figure (`\v` flips it to its text and back), and `y` in its
 /// detail panel copying as Evil's `y` does, to the clipboard and the kill ring. Nothing of it runs
-/// until `\v` or a figure's file.
+/// until `\v` or a figure's file. And delta, with its defaults: the first-parent line, 200 commits
+/// at a time, git on the login shell's PATH, and its copies (`y`, `Y` and `gy`: a commit's hash, or
+/// its short hash and subject) going as Evil's `y` does, to the clipboard and the kill ring.
+/// Nothing of it runs until `\d`.
 pub fn extensions() -> Vec<Box<dyn Extension>> {
     vec![
         Box::new(die_orchid_client::Orchid::default()),
@@ -73,6 +76,7 @@ pub fn extensions() -> Vec<Box<dyn Extension>> {
             .copying_with(die::vim::kill_new),
         ),
         Box::new(die_scribble::Scribble::default()),
+        Box::new(die_delta::Delta::default().copying_with(die::vim::kill_new)),
     ]
 }
 
@@ -86,11 +90,14 @@ pub fn bindings(reg: &mut Registry) {
     // new scratch board.
     keys.bind(State::Normal, "<leader>w", "whiteboard");
     // fig: this buffer's data as a figure, or from a figure its buffer again; in visual state,
-    // the selection's. `\g`, `\d` and `\t` are taken in init.el.
+    // the selection's. `\g` and `\t` are taken in init.el.
     keys.bind(State::Normal, "<leader>v", "fig-toggle");
     keys.bind(State::Visual, "<leader>v", "fig-toggle");
     // scribble: the notes in ~/.config/scribble/, searched by name, as `\s` opens scrib in init.el.
     keys.bind(State::Normal, "<leader>s", "scribble");
+    // delta: this repository's commits, the files each changed and their diffs, as `\d` opens
+    // delta in init.el.
+    keys.bind(State::Normal, "<leader>d", "delta");
     // A markdown file's two views, rendered and raw. It's in the mode's keymap, so `\m` is a key
     // only where there's markdown to render, and in the page's, which is a buffer of its own
     // with no mode: `\m` there goes back to the file. Both only where the extension is.

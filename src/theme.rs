@@ -1,13 +1,20 @@
 //! The extensions' faces in mono-dark, the owner's Emacs theme: die-dev's `mono_dark` styles core's
 //! faces only, as DIE reports a face a theme styles that no one declared, so each extension's faces
 //! are styled here, in mono-dark's palette (`die_dev::theme`). They're as DIE's config had them
-//! before the extensions left it, each noting the Emacs face or stylesheet rule it comes from.
+//! before the extensions left it, each noting the Emacs face or stylesheet rule it comes from;
+//! delta's, installed since, by what each draws.
 
 use die::core::{Rgb, Style, Theme, Underline};
-use die_dev::theme::{BG_HL, BG_SUBTLE, BORDER, FG, FG_BRIGHT, FG_DIM, FG_MID, RED};
+use die_dev::theme::{BG_HL, BG_SUBTLE, BORDER, FG, FG_BRIGHT, FG_DIM, FG_MID, GREEN, RED};
 
 /// fig's gridlines: a step off the ground, under the border's grey.
 const GRID: Rgb = Rgb::hex("#2a2a2a");
+
+/// mono-dark's yellow, its ANSI yellow, which the palette has among its 16 ANSI colours only:
+/// delta's branch and tag names.
+const YELLOW: Rgb = Rgb::hex("#b8963e");
+/// The owner's bright purple for a merge's icon, as die-delta declares it.
+const PURPLE: Rgb = Rgb::hex("#c678dd");
 
 /// highlight.js's grayscale-dark, which the owner's Emacs markdown preview colours code blocks with
 /// (`markdown-xwidget`'s `highlight_css/grayscale-dark.css`): its base16 greys by the role it gives
@@ -31,7 +38,8 @@ pub fn mono_dark() -> Theme {
 /// the owner's Emacs preview uses (`markdown-xwidget`'s `resources/mono-dark.css`). A markdown page
 /// takes its colours from the same faces, and `tests/markdown.rs` holds them to the stylesheet's.
 /// fig's series and status faces are left unstyled, so a figure's data takes fig's validated
-/// colours for a dark ground.
+/// colours for a dark ground. And delta's commits, files and diffs, but for its search line, which
+/// takes `highlight` as scribble's does.
 pub fn faces(theme: Theme) -> Theme {
     let s = Style::new;
     theme
@@ -113,6 +121,26 @@ pub fn faces(theme: Theme) -> Theme {
         .face("markdown-code-inserted", s().fg(CODE_STRING))
         .face("markdown-code-deleted", s().fg(CODE_VARIABLE))
         .face("markdown-code-heading", s().fg(CODE_FUNCTION))
+        // delta's commits and headers: a commit's icon in the green and a merge's in the purple,
+        // plain; a hash and a date a step back, as secondary text is; branches and tags in the
+        // yellow, bold as the base face they're declared on; and what's under way, a merge or a
+        // rebase, and an unmerged file, in the red.
+        .face("delta-commit", s().fg(GREEN).bold_is(false))
+        .face("delta-merge", s().fg(PURPLE))
+        .face("delta-hash", s().fg(FG_MID))
+        .face("delta-date", s().fg(FG_MID))
+        .face("delta-ref", s().fg(YELLOW))
+        .face("delta-banner", s().fg(RED))
+        // delta's diffs: added and removed lines in the green and the red, plain, though
+        // success and error are bold; the words that changed on a paired line in bold; a hunk's
+        // `@@` line as text in bold, and a file's line as a heading. Its search line takes
+        // `highlight`, as scribble's does.
+        .face("delta-added", s().fg(GREEN).bold_is(false))
+        .face("delta-removed", s().fg(RED).bold_is(false))
+        .face("delta-added-word", s().fg(GREEN).bold())
+        .face("delta-removed-word", s().fg(RED).bold())
+        .face("delta-hunk", s().fg(FG).bold())
+        .face("delta-file", s().fg(FG_BRIGHT).bold())
 }
 
 /// A heading: bold in `fg`, and any underline in the border's colour, as the stylesheet's

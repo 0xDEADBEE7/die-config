@@ -20,7 +20,8 @@ fn harness() -> Harness {
             "jellyfish",
             "markdown",
             "fig",
-            "scribble"
+            "scribble",
+            "delta"
         ],
         "this config's extensions"
     );

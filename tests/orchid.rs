@@ -32,7 +32,8 @@ fn harness(root: &TempRoot, fake: &FakeRunner) -> Harness {
             "jellyfish",
             "markdown",
             "fig",
-            "scribble"
+            "scribble",
+            "delta"
         ],
         "this config's extensions"
     );
@@ -41,6 +42,7 @@ fn harness(root: &TempRoot, fake: &FakeRunner) -> Harness {
     exts.push(Box::new(die_whiteboard::Whiteboard::for_tests()));
     exts.push(Box::new(die_fig::Fig::default()));
     exts.push(Box::new(die_scribble::Scribble::default()));
+    exts.push(Box::new(die_delta::Delta::default()));
     let mut h = Harness::with_config(exts, config.core).unwrap();
     h.open_text("notes", "my notes\n").unwrap();
     h.set_window_size(120, 40);

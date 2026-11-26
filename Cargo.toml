@@ -38,6 +38,8 @@ die-scribble = { git = "https://github.com/0xDEADBEE7/die-scribble", branch = "m
 die-markdown = { git = "https://github.com/0xDEADBEE7/die-markdown", branch = "main" }
 # Figures from data, charts, graphs, gantt charts and dashboards: `\v`.
 die-fig = { git = "https://github.com/0xDEADBEE7/die-fig", branch = "main" }
+# Git history: a browser of a repository's commits, the files each changed and their diffs: `\d`.
+die-delta = { git = "https://github.com/0xDEADBEE7/die-delta", branch = "main" }
 
 # die-test-cap is the memory limit inside every test binary, as in DIE.
 [dev-dependencies]
