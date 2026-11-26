@@ -54,9 +54,13 @@ profile. `tests/data/` holds the die-fig examples the fig tests read (`graphs/se
 with an invented history in a temporary directory, opens delta on it with `\d`, plays a few seconds
 of keys (moves, a search, a commit's files, two diffs and back) and draws each screen through DIE's
 renderer at 2x, as DIE.app does, with the status line of a DIE started in your home directory and
-the keys captioned. It writes `tour.png`, an animated PNG that loops, each frame only the rectangle
-that changed. It needs a GPU and `DIE_FONT_DIR`:
+the keys captioned. It writes the screens and a manifest of how long each stays.
+[filmstrip](https://github.com/0xDEADBEE7/filmstrip) films those into `tour.webp`, a lossless
+animated WebP that loops: a Rust WebP writer would build libwebp's C, which D16 keeps out of the
+build. It needs a GPU and `DIE_FONT_DIR`, and filmstrip (`pip install
+"filmstrip @ git+https://github.com/0xDEADBEE7/filmstrip"`):
 
 ```sh
-cargo run --release --example delta_shot -- ../die-delta/docs/images
+cargo run --release --example delta_shot -- target/delta-tour
+filmstrip target/delta-tour/manifest.json -o ../die-delta/docs/images/tour.webp
 ```

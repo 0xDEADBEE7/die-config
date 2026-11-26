@@ -44,8 +44,8 @@ die-delta = { git = "https://github.com/0xDEADBEE7/die-delta", branch = "main" }
 # die-test-cap is the memory limit inside every test binary, as in DIE.
 [dev-dependencies]
 die-test-cap = { git = "https://github.com/0xDEADBEE7/die", branch = "main" }
-# The animated PNG writer for examples/delta_shot.rs, at die-draw's pin: already in the build through
-# die-fig and the whiteboard.
+# The PNG writer for the screens examples/delta_shot.rs saves, at die-draw's pin: already in the
+# build through die-fig and the whiteboard.
 png = "=0.18.1"
 
 # DIE's own: the terminal engine's sys crate links Ghostty's signed archive rather than building

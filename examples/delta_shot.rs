@@ -3,14 +3,15 @@
 //! with two merged branches, two tags and two files changed but not committed. It opens delta on
 //! it with `\d`, through this config's keys, theme and faces, and plays [`TOUR`]: a few moves
 //! down the commits, a search, a commit's files and two of its diffs, back, and the query
-//! cleared, so the loop starts where it ends. Each step is drawn
-//! through DIE's renderer as DIE.app draws it (Ioskeley Mono Term at 16 pt on a 2x display, with
-//! the status line of a DIE started in your home directory), and the keys that made it are
-//! captioned at the right of the empty command line. The frames go to `tour.png`, an animated PNG
-//! that loops, each frame only the rectangle that changed.
+//! cleared, so the loop starts where it ends. Each step is drawn through DIE's renderer as
+//! DIE.app draws it (Ioskeley Mono Term at 16 pt on a 2x display, with the status line of a DIE
+//! started in your home directory), and the keys that made it are captioned at the right of the
+//! empty command line. The screens go to `OUT_DIR/shots/` with `OUT_DIR/manifest.json`, which
+//! [filmstrip](https://github.com/0xDEADBEE7/filmstrip) films into a lossless animated WebP:
 //!
 //! ```sh
-//! cargo run --release --example delta_shot -- OUT_DIR
+//! cargo run --release --example delta_shot -- target/delta-tour
+//! filmstrip target/delta-tour/manifest.json -o ../die-delta/docs/images/tour.webp
 //! ```
 //!
 //! The people, dates and code are made up. git runs with a HOME of its own and nothing of this
@@ -66,7 +67,8 @@ fn main() {
         .nth(1)
         .map(PathBuf::from)
         .expect("usage: delta_shot OUT_DIR");
-    fs::create_dir_all(&out).unwrap();
+    let _ = fs::remove_dir_all(out.join("shots"));
+    fs::create_dir_all(out.join("shots")).unwrap();
     let root = std::env::temp_dir().join(format!("delta-shot-{}", std::process::id()));
     let _ = fs::remove_dir_all(&root);
     let repo = Repo::new(&root);
@@ -77,16 +79,25 @@ fn main() {
     let (file, _) = h.open_text("main.rs", "").unwrap();
     h.set_directory(file, &repo.dir);
     h.set_window_size(COLS, ROWS);
-    let mut tour = Tour::default();
-    for (keys, caption, hold) in TOUR {
+    let mut steps = Vec::new();
+    for (i, (keys, caption, hold)) in TOUR.iter().enumerate() {
         press(&mut h, keys);
         let mut scene = h.scene();
         caption_keys(&mut scene, caption);
-        tour.frame(&mut r, &scene, *hold);
+        let shot = format!("shots/{i:03}.png");
+        write_png(&out.join(&shot), &mut r, &scene);
+        steps.push(format!(
+            r#"{{"shot": "{shot}", "scale": 2, "hold": {hold}}}"#
+        ));
     }
-    let path = out.join("tour.png");
-    let (frames, bytes) = tour.write(&path);
-    println!("{}  {frames} frames, {bytes} bytes", path.display());
+    // The tour ends where it starts but for the caption, so the loop is a cut.
+    let manifest = format!(
+        "{{\"scale\": 2, \"loop\": \"cut\", \"steps\": [\n  {}\n]}}\n",
+        steps.join(",\n  ")
+    );
+    let path = out.join("manifest.json");
+    fs::write(&path, manifest).unwrap();
+    println!("{}: {} shots", path.display(), steps.len());
     let _ = fs::remove_dir_all(&root);
 }
 
@@ -129,89 +140,24 @@ fn caption_keys(scene: &mut Scene, caption: &str) {
     }
 }
 
-/// An animated PNG's frames: the first whole, each after it the rectangle that changed, with
-/// how long it stays. A frame that changes nothing lengthens the one before.
-#[derive(Default)]
-struct Tour {
-    size: (u32, u32),
-    last: Vec<u8>,
-    frames: Vec<Frame>,
-}
-
-struct Frame {
-    at: (u32, u32),
-    size: (u32, u32),
-    rgb: Vec<u8>,
-    hold: u16,
-}
-
-impl Tour {
-    fn frame(&mut self, r: &mut Renderer, scene: &Scene, hold: u16) {
-        let (w, h) = r.cell().grid(scene.cols, scene.rows);
-        let image = r.render(scene, w, h).unwrap();
-        let rgb: Vec<u8> = image
-            .bgra
-            .chunks_exact(4)
-            .flat_map(|p| [p[2], p[1], p[0]])
-            .collect();
-        if self.frames.is_empty() {
-            self.size = (w, h);
-            let whole = Frame {
-                at: (0, 0),
-                size: (w, h),
-                rgb: rgb.clone(),
-                hold,
-            };
-            self.frames.push(whole);
-            self.last = rgb;
-            return;
-        }
-        assert_eq!(self.size, (w, h), "every frame the same size");
-        let row = |y: u32| (y * w * 3) as usize..((y + 1) * w * 3) as usize;
-        let changed: Vec<u32> = (0..h)
-            .filter(|&y| rgb[row(y)] != self.last[row(y)])
-            .collect();
-        let (Some(&top), Some(&bottom)) = (changed.first(), changed.last()) else {
-            self.frames.last_mut().unwrap().hold += hold;
-            return;
-        };
-        let px = |y: u32, x: u32| (((y * w) + x) * 3) as usize..(((y * w) + x) * 3 + 3) as usize;
-        let differs = |x: u32| (top..=bottom).any(|y| rgb[px(y, x)] != self.last[px(y, x)]);
-        let left = (0..w).find(|&x| differs(x)).unwrap();
-        let right = (0..w).rev().find(|&x| differs(x)).unwrap();
-        let mut part = Vec::new();
-        for y in top..=bottom {
-            part.extend_from_slice(&rgb[px(y, left).start..px(y, right).end]);
-        }
-        self.frames.push(Frame {
-            at: (left, top),
-            size: (right - left + 1, bottom - top + 1),
-            rgb: part,
-            hold,
-        });
-        self.last = rgb;
-    }
-
-    /// Write the animation, looping, to `path`: how many frames, and how many bytes.
-    fn write(&self, path: &Path) -> (usize, usize) {
-        let mut bytes = Vec::new();
-        let mut png = png::Encoder::new(&mut bytes, self.size.0, self.size.1);
-        png.set_color(png::ColorType::Rgb);
-        png.set_depth(png::BitDepth::Eight);
-        png.set_compression(png::Compression::High);
-        png.set_animated(self.frames.len() as u32, 0).unwrap();
-        let mut out = png.write_header().unwrap();
-        for f in &self.frames {
-            out.set_frame_position(0, 0).unwrap();
-            out.set_frame_dimension(f.size.0, f.size.1).unwrap();
-            out.set_frame_position(f.at.0, f.at.1).unwrap();
-            out.set_frame_delay(f.hold, 1000).unwrap();
-            out.write_image_data(&f.rgb).unwrap();
-        }
-        out.finish().unwrap();
-        fs::write(path, &bytes).unwrap();
-        (self.frames.len(), bytes.len())
-    }
+/// `scene` drawn as DIE.app draws it, saved as a PNG.
+fn write_png(path: &Path, r: &mut Renderer, scene: &Scene) {
+    let (w, h) = r.cell().grid(scene.cols, scene.rows);
+    let image = r.render(scene, w, h).unwrap();
+    let rgb: Vec<u8> = image
+        .bgra
+        .chunks_exact(4)
+        .flat_map(|p| [p[2], p[1], p[0]])
+        .collect();
+    let mut bytes = Vec::new();
+    let mut png = png::Encoder::new(&mut bytes, w, h);
+    png.set_color(png::ColorType::Rgb);
+    png.set_depth(png::BitDepth::Eight);
+    png.set_compression(png::Compression::Fast);
+    let mut writer = png.write_header().unwrap();
+    writer.write_image_data(&rgb).unwrap();
+    writer.finish().unwrap();
+    fs::write(path, bytes).unwrap();
 }
 
 /// A repository, `harbor`, with a HOME of its own.
