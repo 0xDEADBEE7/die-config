@@ -312,6 +312,7 @@ dependencies = [
  "die",
  "die-delta",
  "die-dev",
+ "die-draw",
  "die-fig",
  "die-jellyfish",
  "die-markdown",

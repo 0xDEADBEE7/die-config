@@ -47,3 +47,14 @@ through `die_dev::greeted`, and the theme. They run through die-core's harness a
 test runs again in a process with a HOME of its own, so a live command's login shell reads no real
 profile. `tests/data/` holds the die-fig examples the fig tests read (`graphs/services.json`,
 `dash/`, `live/`), copied from die-fig's `examples/data` at the split.
+
+## Pictures
+
+`delta_shot` draws die-delta's README pictures as this config shows delta. It makes a repository
+with an invented history in a temporary directory, opens delta on it with `\d`, and draws the
+commits, a commit's files and a diff through DIE's renderer at 2x, as DIE.app does, with the
+status line of a DIE started in your home directory. It needs a GPU and `DIE_FONT_DIR`:
+
+```sh
+cargo run --release --example delta_shot -- ../die-delta/docs/images
+```
