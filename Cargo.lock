@@ -310,6 +310,7 @@ name = "die-config"
 version = "0.0.0"
 dependencies = [
  "die",
+ "die-delta",
  "die-dev",
  "die-fig",
  "die-jellyfish",
@@ -332,6 +333,16 @@ dependencies = [
  "serde",
  "serde_json",
  "slotmap",
+ "unicode-segmentation",
+ "unicode-width",
+]
+
+[[package]]
+name = "die-delta"
+version = "0.0.0"
+source = "git+https://github.com/0xDEADBEE7/die-delta?branch=main#62da293cfbd16c68938fc7fd40c0cebeddf80bb0"
+dependencies = [
+ "die-core",
  "unicode-segmentation",
  "unicode-width",
 ]
