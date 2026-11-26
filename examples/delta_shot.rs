@@ -1,15 +1,13 @@
-//! `delta_shot`: die-delta's README pictures, as this config shows delta. It makes a repository
+//! `delta_shot`: die-delta's README animation, as this config shows delta. It makes a repository
 //! with an invented history in a temporary directory: a small tide-table program by three people,
-//! with two merged branches, two tags and two files changed but not committed.
-//! It opens delta on it with `\d`, through this config's keys, theme and faces, and draws three
-//! screens through DIE's renderer as DIE.app draws them: Ioskeley Mono Term at 16 pt on a 2x
-//! display, with DIE.app's status line, which shows the home directory it starts in.
-//!
-//! - `commits.png`: the commits, the newest selected;
-//! - `files.png`: the commit that moved the stations to a TOML file: its message, a rename and
-//!   the stat bars;
-//! - `diff.png`: the station search's diff on its first hunk: two hunks, their changed words
-//!   in bold.
+//! with two merged branches, two tags and two files changed but not committed. It opens delta on
+//! it with `\d`, through this config's keys, theme and faces, and plays [`TOUR`]: a few moves
+//! down the commits, a search, a commit's files and two of its diffs, back, and the query
+//! cleared, so the loop starts where it ends. Each step is drawn
+//! through DIE's renderer as DIE.app draws it (Ioskeley Mono Term at 16 pt on a 2x display, with
+//! the status line of a DIE started in your home directory), and the keys that made it are
+//! captioned at the right of the empty command line. The frames go to `tour.png`, an animated PNG
+//! that loops, each frame only the rectangle that changed.
 //!
 //! ```sh
 //! cargo run --release --example delta_shot -- OUT_DIR
@@ -18,7 +16,7 @@
 //! The people, dates and code are made up. git runs with a HOME of its own and nothing of this
 //! machine's git config.
 
-use die::core::Harness;
+use die::core::{Cell, Glyph, Harness, Scene};
 use die::render::driver::{Config as Font, Renderer};
 use die_test_cap as _;
 use std::fs;
@@ -32,6 +30,36 @@ const ROWS: usize = 26;
 const MIRA: (&str, &str) = ("Mira Okafor", "mira@example.com");
 const TOMAS: (&str, &str) = ("Tomás Reyes", "tomas@example.com");
 const JUN: (&str, &str) = ("Jun Park", "jun@example.com");
+
+/// The steps: the keys typed, their caption, and how long the screen they make stays, in
+/// milliseconds.
+const TOUR: &[(&str, &str, u16)] = &[
+    ("\\d", "\\d", 1300),
+    ("j", "j", 260),
+    ("j", "j", 260),
+    ("k", "k", 500),
+    ("/", "/", 300),
+    ("s", "/s", 90),
+    ("t", "/st", 90),
+    ("a", "/sta", 90),
+    ("t", "/stat", 90),
+    ("i", "/stati", 90),
+    ("o", "/statio", 90),
+    ("n", "/station", 900),
+    ("<Esc>", "Esc", 300),
+    ("j", "j", 260),
+    ("j", "j", 260),
+    ("j", "j", 450),
+    ("<CR>", "RET", 1400),
+    ("j", "j", 260),
+    ("j", "j", 260),
+    ("j", "j", 450),
+    ("<CR>", "RET", 1400),
+    ("n", "n", 1100),
+    ("b", "b", 600),
+    ("b", "b", 700),
+    ("d", "d", 1300),
+];
 
 fn main() {
     let out = std::env::args_os()
@@ -49,13 +77,16 @@ fn main() {
     let (file, _) = h.open_text("main.rs", "").unwrap();
     h.set_directory(file, &repo.dir);
     h.set_window_size(COLS, ROWS);
-
-    keys(&mut h, "\\dj");
-    shot(&mut h, &mut r, &out.join("commits.png"));
-    keys(&mut h, "/toml<CR>");
-    shot(&mut h, &mut r, &out.join("files.png"));
-    keys(&mut h, "\\d/any case<CR><CR>J");
-    shot(&mut h, &mut r, &out.join("diff.png"));
+    let mut tour = Tour::default();
+    for (keys, caption, hold) in TOUR {
+        press(&mut h, keys);
+        let mut scene = h.scene();
+        caption_keys(&mut scene, caption);
+        tour.frame(&mut r, &scene, *hold);
+    }
+    let path = out.join("tour.png");
+    let (frames, bytes) = tour.write(&path);
+    println!("{}  {frames} frames, {bytes} bytes", path.display());
     let _ = fs::remove_dir_all(&root);
 }
 
@@ -70,12 +101,8 @@ fn harness(repo: &Repo) -> Harness {
     .copying_with(die::vim::kill_new);
     let config = die_config::config(vec![]);
     let mut exts = die::built_in();
-    exts.extend(
-        config
-            .extensions
-            .into_iter()
-            .filter(|e| e.name() != "delta"),
-    );
+    let others = config.extensions.into_iter();
+    exts.extend(others.filter(|e| e.name() != "delta"));
     exts.push(Box::new(delta));
     let mut h = Harness::with_config(exts, config.core).unwrap();
     let home = &repo.home;
@@ -84,25 +111,107 @@ fn harness(repo: &Repo) -> Harness {
 }
 
 /// Type `keys`, each of which must work, then wait for git.
-fn keys(h: &mut Harness, keys: &str) {
+fn press(h: &mut Harness, keys: &str) {
     for k in h.type_keys(keys).unwrap() {
         assert!(k.errors.is_empty(), "{}: {:?}", k.key, k.errors);
     }
     h.run_until_idle();
 }
 
-/// The frame, as DIE draws it, to a PNG at `path`.
-fn shot(h: &mut Harness, r: &mut Renderer, path: &Path) {
-    let scene = h.scene();
-    let (w, hgt) = r.cell().grid(scene.cols, scene.rows);
-    let image = r.render(&scene, w, hgt).unwrap();
-    let mut rgba = image.bgra;
-    for px in rgba.chunks_exact_mut(4) {
-        px.swap(0, 2);
+/// The keys that made this screen, dim, at the right of the command line, the frame's last row,
+/// which is empty in the tour: a screencast's key caption, not part of DIE.
+fn caption_keys(scene: &mut Scene, caption: &str) {
+    let row = scene.rows - 1;
+    let start = scene.cols - caption.chars().count() - 3;
+    for (i, c) in caption.chars().enumerate() {
+        let cell = &mut scene.cells[row * scene.cols + start + i];
+        *cell = Cell::new(Glyph::Char(c), die_dev::theme::FG_MID, cell.bg);
     }
-    let png = die_draw::image::encode(image.w, image.h, &rgba).unwrap();
-    fs::write(path, png).unwrap();
-    println!("{}  {}x{}", path.display(), image.w, image.h);
+}
+
+/// An animated PNG's frames: the first whole, each after it the rectangle that changed, with
+/// how long it stays. A frame that changes nothing lengthens the one before.
+#[derive(Default)]
+struct Tour {
+    size: (u32, u32),
+    last: Vec<u8>,
+    frames: Vec<Frame>,
+}
+
+struct Frame {
+    at: (u32, u32),
+    size: (u32, u32),
+    rgb: Vec<u8>,
+    hold: u16,
+}
+
+impl Tour {
+    fn frame(&mut self, r: &mut Renderer, scene: &Scene, hold: u16) {
+        let (w, h) = r.cell().grid(scene.cols, scene.rows);
+        let image = r.render(scene, w, h).unwrap();
+        let rgb: Vec<u8> = image
+            .bgra
+            .chunks_exact(4)
+            .flat_map(|p| [p[2], p[1], p[0]])
+            .collect();
+        if self.frames.is_empty() {
+            self.size = (w, h);
+            let whole = Frame {
+                at: (0, 0),
+                size: (w, h),
+                rgb: rgb.clone(),
+                hold,
+            };
+            self.frames.push(whole);
+            self.last = rgb;
+            return;
+        }
+        assert_eq!(self.size, (w, h), "every frame the same size");
+        let row = |y: u32| (y * w * 3) as usize..((y + 1) * w * 3) as usize;
+        let changed: Vec<u32> = (0..h)
+            .filter(|&y| rgb[row(y)] != self.last[row(y)])
+            .collect();
+        let (Some(&top), Some(&bottom)) = (changed.first(), changed.last()) else {
+            self.frames.last_mut().unwrap().hold += hold;
+            return;
+        };
+        let px = |y: u32, x: u32| (((y * w) + x) * 3) as usize..(((y * w) + x) * 3 + 3) as usize;
+        let differs = |x: u32| (top..=bottom).any(|y| rgb[px(y, x)] != self.last[px(y, x)]);
+        let left = (0..w).find(|&x| differs(x)).unwrap();
+        let right = (0..w).rev().find(|&x| differs(x)).unwrap();
+        let mut part = Vec::new();
+        for y in top..=bottom {
+            part.extend_from_slice(&rgb[px(y, left).start..px(y, right).end]);
+        }
+        self.frames.push(Frame {
+            at: (left, top),
+            size: (right - left + 1, bottom - top + 1),
+            rgb: part,
+            hold,
+        });
+        self.last = rgb;
+    }
+
+    /// Write the animation, looping, to `path`: how many frames, and how many bytes.
+    fn write(&self, path: &Path) -> (usize, usize) {
+        let mut bytes = Vec::new();
+        let mut png = png::Encoder::new(&mut bytes, self.size.0, self.size.1);
+        png.set_color(png::ColorType::Rgb);
+        png.set_depth(png::BitDepth::Eight);
+        png.set_compression(png::Compression::High);
+        png.set_animated(self.frames.len() as u32, 0).unwrap();
+        let mut out = png.write_header().unwrap();
+        for f in &self.frames {
+            out.set_frame_position(0, 0).unwrap();
+            out.set_frame_dimension(f.size.0, f.size.1).unwrap();
+            out.set_frame_position(f.at.0, f.at.1).unwrap();
+            out.set_frame_delay(f.hold, 1000).unwrap();
+            out.write_image_data(&f.rgb).unwrap();
+        }
+        out.finish().unwrap();
+        fs::write(path, &bytes).unwrap();
+        (self.frames.len(), bytes.len())
+    }
 }
 
 /// A repository, `harbor`, with a HOME of its own.
@@ -285,7 +394,8 @@ const README_5: &str = "# harbor\n\nTide tables from harmonic constants, for any
 const CI: &str = "on: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      \
                   - uses: actions/checkout@v4\n      - run: cargo test\n";
 
-const MAIN_1: &str = "mod tide;\n\nfn main() {\n    for (hour, height) in tide::table(7) {\n        \
+const MAIN_1: &str = "mod tide;\n\nfn main() {\n    let days = 7;\n    \
+                      for (hour, height) in tide::table(days) {\n        \
                       println!(\"{hour}  {height:.1} m\");\n    }\n}\n";
 
 const MAIN_2: &str = "mod station;\nmod tide;\n\nfn main() {\n    \
@@ -293,7 +403,8 @@ const MAIN_2: &str = "mod station;\nmod tide;\n\nfn main() {\n    \
                       let text = std::fs::read_to_string(\"data/stations.toml\").unwrap();\n    \
                       let stations = station::load(&text).unwrap();\n    \
                       let here = station::find(&stations, &name).unwrap();\n    \
-                      for (hour, height) in tide::table(here, 7) {\n        \
+                      let days = 7;\n    \
+                      for (hour, height) in tide::table(here, days) {\n        \
                       println!(\"{hour}  {height:.1} m\");\n    }\n}\n";
 
 const MAIN_3: &str = "mod ics;\nmod station;\nmod tide;\n\nfn main() {\n    \
