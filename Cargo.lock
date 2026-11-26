@@ -341,7 +341,7 @@ dependencies = [
 [[package]]
 name = "die-delta"
 version = "0.0.0"
-source = "git+https://github.com/0xDEADBEE7/die-delta?branch=main#62da293cfbd16c68938fc7fd40c0cebeddf80bb0"
+source = "git+https://github.com/0xDEADBEE7/die-delta?branch=main#314c2b50bd6e5a81fa383674724cc4b5df0b8871"
 dependencies = [
  "die-core",
  "unicode-segmentation",
